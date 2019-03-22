@@ -7,15 +7,20 @@ using System.Text;
 using System.Threading.Tasks;
 using Excel = Microsoft.Office.Interop.Excel;
 
-namespace OfficeVSTOAddIn.MyExcel.Sample01
+namespace OfficeInterop.ExcelSample.T04
 {
     class Program
     {
         static void Main(string[] args)
         {
-            string filePath = Path.Combine(Environment.CurrentDirectory, DateTime.Now.ToString("yyyyMMddHHmmssfff") + "-test.xlsx");
+            string filePath = Path.Combine(Path.GetTempPath(), DateTime.Now.ToString("yyyyMMddHHmmssfff") + "-test.xlsx");
             Console.WriteLine(filePath);
+
+            string logFile = Path.Combine(Path.GetTempPath(), DateTime.Now.ToString("yyyyMMddHHmmssfff") + "-log.txt");
+            LogToFile(logFile, "File path: " + filePath);
+
             CreateExcelFile(filePath);
+            LogToFile(logFile, "Finished");
         }
 
         static void CreateExcelFile(string filePath)
@@ -54,6 +59,14 @@ namespace OfficeVSTOAddIn.MyExcel.Sample01
             Marshal.ReleaseComObject(xlWorksheet);
             Marshal.ReleaseComObject(xlWorkbook);
             Marshal.ReleaseComObject(xlApp);
+        }
+
+        static void LogToFile(string logFile, string message)
+        {
+            using (StreamWriter file = File.AppendText(logFile))
+            {
+                file.WriteLine(DateTime.Now.ToString("yyyy/MM/dd HH:mm:sss") + "   " + message);
+            }
         }
     }
 }
